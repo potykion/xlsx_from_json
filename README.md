@@ -34,7 +34,8 @@ Create .json file with following structure:
             ]
         }
     ],
-    "start_column": 3
+    "start_column": 3,
+    "start_row": 2
 }
 ```
 
@@ -54,7 +55,7 @@ Created workbook will have values and styles defined above:
 
 ```python
 sheet = wb.active
-assert sheet.cell(row=1, cell=3).value == "Sample text"
+assert sheet.cell(row=2, cell=3).value == "Sample text"
 ```
 
 You can pass default style to xlsx builder:
@@ -68,9 +69,9 @@ default_style = Style(font=Font("Times New Roman", 12, True))
 wb = xlsx_from_json(json_data, default_style)
 sheet = wb.active
 
-assert sheet.cell(row=1, cell=3).font.name == "Times New Roman"
-assert sheet.cell(row=1, cell=3).font.size == 12
-assert sheet.cell(row=1, cell=3).font.bold
+assert sheet.cell(row=2, cell=3).font.name == "Times New Roman"
+assert sheet.cell(row=2, cell=3).font.size == 12
+assert sheet.cell(row=2, cell=3).font.bold
 ```
 
 
