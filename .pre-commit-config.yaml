@@ -1,0 +1,27 @@
+fail_fast: true
+repos:
+- repo: local
+  hooks:
+  - id: pytest
+    name: pytest
+    entry: pipenv run pytest tests
+    pass_filenames: false
+    language: system
+
+  - id: mypy
+    name: mypy
+    entry: pipenv run mypy xlsx_from_json
+    pass_filenames: false
+    language: system
+
+  - id: pylint
+    name: pylint
+    entry: pipenv run pylint xlsx_from_json
+    pass_filenames: false
+    language: system
+
+  - id: black
+    name: black
+    entry: pipenv run black xlsx_from_json
+    pass_filenames: false
+    language: system

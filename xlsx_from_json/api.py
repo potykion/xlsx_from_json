@@ -4,7 +4,7 @@ from openpyxl import Workbook
 from openpyxl.conftest import Worksheet
 
 
-def xlsx_from_json(json_data) -> Workbook:
+def xlsx_from_json(json_data: Dict) -> Workbook:
     wb = Workbook()
     sheet = wb.active
     _fill_sheet(sheet, json_data)

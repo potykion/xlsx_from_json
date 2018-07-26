@@ -8,6 +8,10 @@ openpyxl = "*"
 
 [dev-packages]
 pytest = "*"
+pre-commit = "*"
+black = "*"
+mypy = "*"
+pylint = "*"
 
 [requires]
 python_version = "3.6"
