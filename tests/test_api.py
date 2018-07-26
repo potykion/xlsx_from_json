@@ -17,11 +17,19 @@ def json_data():
                     }
                 ]
             }
-        ]
+        ],
+        "offset": 2
     }
 
 
-def test_xlsx_from_json(json_data):
+def test_created_workbook_has_values(json_data):
     workbook: Workbook = xlsx_from_json(json_data)
     sheet = workbook.active
-    assert list(chain.from_iterable(sheet.values)) == ["Sample text"]
+    assert list(filter(None, chain.from_iterable(sheet.values))) == ["Sample text"]
+
+
+
+def test_wb_row_has_cell_with_offset(json_data):
+    workbook: Workbook = xlsx_from_json(json_data)
+    sheet = workbook.active
+    assert sheet.cell(row=1, column=3).value == "Sample text"
