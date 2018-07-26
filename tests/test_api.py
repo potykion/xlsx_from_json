@@ -2,6 +2,8 @@ from itertools import chain
 
 import pytest
 from openpyxl import Workbook
+from openpyxl.cell import Cell
+from openpyxl.conftest import Worksheet
 
 from xlsx_from_json import xlsx_from_json
 
@@ -14,6 +16,12 @@ def json_data():
                 "cells": [
                     {
                         "value": "Sample text",
+                        "style": {
+                            "font": {
+                                "name": "Times New Roman",
+                                "size": 12
+                            }
+                        }
                     }
                 ]
             }
@@ -22,14 +30,26 @@ def json_data():
     }
 
 
-def test_created_workbook_has_values(json_data):
+@pytest.fixture()
+def sheet(json_data) -> Worksheet:
     workbook: Workbook = xlsx_from_json(json_data)
-    sheet = workbook.active
+    return workbook.active
+
+
+@pytest.fixture()
+def cell(sheet) -> Cell:
+    return sheet.cell(row=1, column=3)
+
+
+def test_sheet_has_values(sheet):
     assert list(filter(None, chain.from_iterable(sheet.values))) == ["Sample text"]
 
 
+def test_cell_is_shifted_by_offset(cell):
+    assert cell.column == 'C'
+    assert cell.value == "Sample text"
 
-def test_wb_row_has_cell_with_offset(json_data):
-    workbook: Workbook = xlsx_from_json(json_data)
-    sheet = workbook.active
-    assert sheet.cell(row=1, column=3).value == "Sample text"
+
+def test_cell_has_font(cell):
+    assert cell.font.name == "Times New Roman"
+    assert cell.font.size == 12

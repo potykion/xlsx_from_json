@@ -1,6 +1,6 @@
 from typing import Dict
 
-from openpyxl import Workbook
+from openpyxl import Workbook, styles
 from openpyxl.conftest import Worksheet
 
 
@@ -16,4 +16,9 @@ def _fill_sheet(sheet: Worksheet, json_data: Dict) -> None:
 
     for row_index, row in enumerate(json_data["rows"]):
         for cell_index, cell in enumerate(row["cells"]):
-            sheet.cell(row_index + 1, cell_index + 1 + offset).value = cell["value"]
+            sheet_cell = sheet.cell(row_index + 1, cell_index + 1 + offset)
+            sheet_cell.value = cell["value"]
+
+            for attr, data in cell["style"].items():
+                if attr == "font":
+                    sheet_cell.font = styles.Font(**data)
