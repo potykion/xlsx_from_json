@@ -1,1 +1,1 @@
-from .api import xlsx_from_json
+from .api import xlsx_from_json, Style

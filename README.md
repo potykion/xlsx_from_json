@@ -58,5 +58,21 @@ sheet = wb.active
 assert sheet.cell(row=1, cell=3).value == "Sample text"
 ```
 
+You can pass default style to xlsx builder:
+
+```python
+from xlsx_from_json import Style
+from openpyxl.styles import Font
+
+default_style = Style(font=Font("Times New Roman", 12, True))
+
+wb = xlsx_from_json(json_data, default_style)
+sheet = wb.active
+
+assert sheet.cell(row=1, cell=3).font.name == "Times New Roman"
+assert sheet.cell(row=1, cell=3).font.size == 12
+assert sheet.cell(row=1, cell=3).font.bold
+```
+
 
 Now you can use workbook according to openpyxl [guide](https://openpyxl.readthedocs.io/en/latest/usage.html).
