@@ -26,20 +26,24 @@ def xlsx_from_json(json_data: Dict, default_style: Style = None) -> Workbook:
 
 
 def _fill_sheet(sheet: Worksheet, json_data: Dict, default_style: Style) -> None:
-    offset = json_data.get("offset", 0)
+    start_column = json_data.get("start_column", 1)
+    current_row = json_data.get("start_row", 1)
 
-    for row_index, row_data in enumerate(json_data["rows"]):
+    for row_data in json_data["rows"]:
+        max_height = 1
+
         for cell_index, cell_data in enumerate(row_data["cells"]):
-            row = row_index + 1
-            column = cell_index + 1 + offset
+            row = current_row
+            column = cell_index + start_column
 
             cell = sheet.cell(row, column)
             cell.value = cell_data["value"]
 
-            width = max(cell_data.get("width", 1), 1)
-            height = max(cell_data.get("height", 1), 1)
+            width = cell_data.get("width", 1)
+            height = cell_data.get("height", 1)
+            max_height = max(max_height, height)
 
-            style = style_from_json(cell_data["style"], default_style)
+            style = style_from_json(cell_data.get("style", {}), default_style)
 
             if width == 1 and height == 1:
                 _apply_styles_to_single_cell(cell, style)
@@ -47,6 +51,8 @@ def _fill_sheet(sheet: Worksheet, json_data: Dict, default_style: Style) -> None
                 cell_range = str_cell_range(column, row, column + width, row + height)
                 sheet.merge_cells(cell_range)
                 style_range(sheet, cell_range, style)
+
+        current_row += max_height
 
 
 def str_cell_range(start_column: int, start_row: int, end_column: int, end_row: int) -> str:

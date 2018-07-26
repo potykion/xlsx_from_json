@@ -34,8 +34,7 @@ Create .json file with following structure:
             ]
         }
     ],
-    // start rendering cells from 3 column
-    "offset": 2
+    "start_column": 3
 }
 ```
 

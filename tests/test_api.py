@@ -47,7 +47,7 @@ def json_data_with_single_cell():
                 ]
             }
         ],
-        "offset": 2
+        "start_column": 3
     }
 
 
@@ -77,6 +77,31 @@ def json_data_with_sized_cell():
                 ]
             }
         ]
+    }
+
+
+@pytest.fixture()
+def json_data_with_start_row_and_multiple_cells():
+    return {
+        "rows": [
+            {
+                "cells": [
+                    {
+                        "value": "1x2",
+                        "height": 2
+                    }
+                ]
+            },
+            {
+                "cells": [
+                    {
+                        "value": "2x1",
+                        "width": 2
+                    }
+                ]
+            }
+        ],
+        "start_row": 2
     }
 
 
@@ -130,3 +155,17 @@ def test_sized_cell_is_rendered_as_merged_cells_and_style_set(json_data_with_siz
     workbook: Workbook = xlsx_from_json(json_data_with_sized_cell)
     sheet = workbook.active
     assert sheet.cell(3, 6).border.bottom.border_style == "medium"
+
+
+def test_sheet_fill_starts_with_start_row(json_data_with_start_row_and_multiple_cells):
+    workbook: Workbook = xlsx_from_json(json_data_with_start_row_and_multiple_cells)
+    sheet = workbook.active
+    assert sheet.cell(row=2, column=1).value == "1x2"
+
+
+def test_sheet_has_two_rows(json_data_with_start_row_and_multiple_cells):
+    workbook: Workbook = xlsx_from_json(json_data_with_start_row_and_multiple_cells)
+    sheet = workbook.active
+    workbook.save("op.xlsx")
+    assert sheet.cell(row=2, column=1).value == "1x2"
+    assert sheet.cell(row=4, column=1).value == "2x1"
