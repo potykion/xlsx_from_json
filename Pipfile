@@ -10,9 +10,10 @@ attrs = "*"
 [dev-packages]
 pytest = "*"
 pre-commit = "*"
-black = "*"
+black = "==18.6b4"
 mypy = "*"
 pylint = "*"
+twine = "*"
 
 [requires]
 python_version = "3.6"
