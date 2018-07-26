@@ -4,8 +4,17 @@ import pytest
 from openpyxl import Workbook
 from openpyxl.cell import Cell
 from openpyxl.conftest import Worksheet
+from openpyxl.styles import Font
 
 from xlsx_from_json import xlsx_from_json
+from xlsx_from_json.api import Style
+
+
+@pytest.fixture()
+def default_style():
+    return Style(
+        font=Font(bold=True)
+    )
 
 
 @pytest.fixture()
@@ -72,8 +81,8 @@ def json_data_with_sized_cell():
 
 
 @pytest.fixture()
-def workbook(json_data_with_single_cell) -> Workbook:
-    return xlsx_from_json(json_data_with_single_cell)
+def workbook(json_data_with_single_cell, default_style) -> Workbook:
+    return xlsx_from_json(json_data_with_single_cell, default_style)
 
 
 @pytest.fixture()
@@ -98,6 +107,10 @@ def test_cell_is_shifted_by_offset(cell):
 def test_cell_has_font(cell):
     assert cell.font.name == "Times New Roman"
     assert cell.font.size == 12
+
+
+def test_cell_has_font_bold_from_default_style(cell):
+    assert cell.font.bold
 
 
 def test_cell_has_border(workbook, cell):

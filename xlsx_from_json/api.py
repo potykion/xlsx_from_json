@@ -10,20 +10,22 @@ from openpyxl.utils import get_column_letter
 
 @attr.s(auto_attribs=True)
 class Style:
-    font: Font
-    border: Border
-    fill: Fill
-    alignment: Alignment
+    font: Font = Font()
+    border: Border = Border()
+    fill: Fill = Fill()
+    alignment: Alignment = Alignment()
 
 
-def xlsx_from_json(json_data: Dict) -> Workbook:
+def xlsx_from_json(json_data: Dict, default_style: Style = None) -> Workbook:
+    default_style = default_style or Style()
+
     wb = Workbook()
     sheet = wb.active
-    _fill_sheet(sheet, json_data)
+    _fill_sheet(sheet, json_data, default_style)
     return wb
 
 
-def _fill_sheet(sheet: Worksheet, json_data: Dict) -> None:
+def _fill_sheet(sheet: Worksheet, json_data: Dict, default_style: Style) -> None:
     offset = json_data.get("offset", 0)
 
     for row_index, row_data in enumerate(json_data["rows"]):
@@ -37,30 +39,38 @@ def _fill_sheet(sheet: Worksheet, json_data: Dict) -> None:
             width = max(cell_data.get("width", 1), 1)
             height = max(cell_data.get("height", 1), 1)
 
-            style = style_from_json(cell_data["style"])
+            style = style_from_json(cell_data["style"], default_style)
 
             if width == 1 and height == 1:
                 _apply_styles_to_single_cell(cell, style)
             else:
-                from_column = get_column_letter(column)
-                to_column = get_column_letter(column + width)
-                cell_range = f"{from_column}{row}:{to_column}{row + height}"
+                cell_range = str_cell_range(column, row, column + width, row + height)
                 sheet.merge_cells(cell_range)
                 style_range(sheet, cell_range, style)
 
 
-def style_from_json(style_json: Dict) -> Style:
+def str_cell_range(start_column: int, start_row: int, end_column: int, end_row: int) -> str:
+    from_column = get_column_letter(start_column)
+    to_column = get_column_letter(end_column)
+    return f"{from_column}{start_row}:{to_column}{end_row}"
+
+
+def style_from_json(style_json: Dict, default_style: Style) -> Style:
     font_data = style_json.get("font", {})
+    font_data = {**vars(default_style.font), **font_data}
     font = Font(**font_data)
 
     sides_data = style_json.get("border", {})
     border_data = {side: Side(**side_data) for side, side_data in sides_data.items()}
+    border_data = {**vars(default_style.border), **border_data}
     border = Border(**border_data)
 
     fill_data = style_json.get("fill", {})
+    fill_data = {**vars(default_style.fill), **fill_data}
     fill = PatternFill(**fill_data)
 
     alignment_data = style_json.get("alignment", {})
+    alignment_data = {**vars(default_style.alignment), **alignment_data}
     alignment = Alignment(**alignment_data)
 
     return Style(font, border, fill, alignment)
