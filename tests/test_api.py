@@ -20,6 +20,12 @@ def json_data():
                             "font": {
                                 "name": "Times New Roman",
                                 "size": 12
+                            },
+                            "border": {
+                                "bottom": {
+                                    "border_style": "medium",
+                                    "color": "FFFFFFFF"
+                                }
                             }
                         }
                     }
@@ -53,3 +59,8 @@ def test_cell_is_shifted_by_offset(cell):
 def test_cell_has_font(cell):
     assert cell.font.name == "Times New Roman"
     assert cell.font.size == 12
+
+
+def test_cell_has_border(cell):
+    assert cell.border.bottom.border_style == "medium"
+    assert cell.border.bottom.color.rgb == "FFFFFFFF"
