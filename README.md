@@ -6,7 +6,7 @@ Creates xlsx from json via [openpyxl](https://openpyxl.readthedocs.io/en/latest/
 
 Create .json file with following structure:
 
-```json
+```java
 {
     "rows": [
         {
