@@ -24,7 +24,7 @@ def json_data_with_single_cell():
                             "border": {
                                 "bottom": {
                                     "border_style": "medium",
-                                    "color": "FFFFFFFF"
+                                    "color": "00000000"
                                 }
                             }
                         }
@@ -66,8 +66,12 @@ def json_data_with_sized_cell():
 
 
 @pytest.fixture()
-def sheet(json_data_with_single_cell) -> Worksheet:
-    workbook: Workbook = xlsx_from_json(json_data_with_single_cell)
+def workbook(json_data_with_single_cell) -> Workbook:
+    return xlsx_from_json(json_data_with_single_cell)
+
+
+@pytest.fixture()
+def sheet(workbook) -> Worksheet:
     return workbook.active
 
 
@@ -90,12 +94,14 @@ def test_cell_has_font(cell):
     assert cell.font.size == 12
 
 
-def test_cell_has_border(cell):
+def test_cell_has_border(workbook, cell):
+    workbook.save("op1.xlsx")
     assert cell.border.bottom.border_style == "medium"
-    assert cell.border.bottom.color.rgb == "FFFFFFFF"
+    assert cell.border.bottom.color.rgb == "00000000"
 
 
 def test_sized_cell_is_rendered_as_merged_cells_and_style_set(json_data_with_sized_cell):
     workbook: Workbook = xlsx_from_json(json_data_with_sized_cell)
     sheet = workbook.active
+    workbook.save("op.xlsx")
     assert sheet.cell(3, 6).border.bottom.border_style == "medium"

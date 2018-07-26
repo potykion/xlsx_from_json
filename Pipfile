@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 openpyxl = "*"
+attrs = "*"
 
 [dev-packages]
 pytest = "*"
