@@ -1,4 +1,5 @@
-from typing import Dict, List
+from operator import attrgetter
+from typing import Dict, List, Iterable
 
 import attr
 from openpyxl import Workbook
@@ -33,17 +34,17 @@ class SheetFiller:
         current_row = self.start_row
 
         for row_data in json_data["rows"]:
-            row_height = self._fill_row(current_row, row_data["cells"])
+            cells = self._fill_row(current_row, row_data["cells"])
+            row_height = max(*map(attrgetter("height"), cells), 1)
             current_row += row_height
 
-    def _fill_row(self, row: int, cells_data: List[Dict]) -> int:
-        max_cell_height = 1
+    def _fill_row(self, row: int, cells_data: List[Dict]) -> Iterable[CellWithSize]:
+        column = self.start_column
 
-        for cell_index, cell_data in enumerate(cells_data):
-            cell = self._create_cell(row, cell_index + self.start_column, cell_data)
-            max_cell_height = max(cell.height, max_cell_height)
-
-        return max_cell_height
+        for cell_data in cells_data:
+            cell = self._create_cell(row, column, cell_data)
+            column += cell.width
+            yield cell
 
     def _create_cell(self, row: int, column: int, cell_data: Dict) -> CellWithSize:
         cell = self.sheet.cell(row, column)
