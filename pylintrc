@@ -142,7 +142,11 @@ disable=print-statement,
         comprehension-escape,
         C0111,
         C0103,
-        R0903
+        R0903,
+        C0301,
+        R0914,
+        R0913,
+        C0330
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option

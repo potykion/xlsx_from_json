@@ -9,7 +9,7 @@ from xlsx_from_json import xlsx_from_json
 
 
 @pytest.fixture()
-def json_data():
+def json_data_with_single_cell():
     return {
         "rows": [
             {
@@ -37,8 +37,37 @@ def json_data():
 
 
 @pytest.fixture()
-def sheet(json_data) -> Worksheet:
-    workbook: Workbook = xlsx_from_json(json_data)
+def json_data_with_sized_cell():
+    return {
+        "rows": [
+            {
+                "cells": [
+                    {
+                        "value": "Sample text",
+                        "width": 5,
+                        "height": 2,
+                        "style": {
+                            "font": {
+                                "name": "Times New Roman",
+                                "size": 12
+                            },
+                            "border": {
+                                "bottom": {
+                                    "border_style": "medium",
+                                    "color": "FFFFFFFF"
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+
+
+@pytest.fixture()
+def sheet(json_data_with_single_cell) -> Worksheet:
+    workbook: Workbook = xlsx_from_json(json_data_with_single_cell)
     return workbook.active
 
 
@@ -64,3 +93,9 @@ def test_cell_has_font(cell):
 def test_cell_has_border(cell):
     assert cell.border.bottom.border_style == "medium"
     assert cell.border.bottom.color.rgb == "FFFFFFFF"
+
+
+def test_sized_cell_is_rendered_as_merged_cells_and_style_set(json_data_with_sized_cell):
+    workbook: Workbook = xlsx_from_json(json_data_with_sized_cell)
+    sheet = workbook.active
+    assert sheet.cell(3, 6).border.bottom.border_style == "medium"
