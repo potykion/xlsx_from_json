@@ -26,6 +26,12 @@ def json_data_with_single_cell():
                                     "border_style": "medium",
                                     "color": "00000000"
                                 }
+                            },
+                            "alignment": {
+                                "horizontal": "center"
+                            },
+                            "fill": {
+                                "patternType": "gray125"
                             }
                         }
                     }
@@ -95,13 +101,19 @@ def test_cell_has_font(cell):
 
 
 def test_cell_has_border(workbook, cell):
-    workbook.save("op1.xlsx")
     assert cell.border.bottom.border_style == "medium"
     assert cell.border.bottom.color.rgb == "00000000"
+
+
+def test_cell_has_alignment(workbook, cell):
+    assert cell.alignment.horizontal == "center"
+
+
+def test_cell_has_fill(workbook, cell):
+    assert cell.fill.patternType == "gray125"
 
 
 def test_sized_cell_is_rendered_as_merged_cells_and_style_set(json_data_with_sized_cell):
     workbook: Workbook = xlsx_from_json(json_data_with_sized_cell)
     sheet = workbook.active
-    workbook.save("op.xlsx")
     assert sheet.cell(3, 6).border.bottom.border_style == "medium"

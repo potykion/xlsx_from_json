@@ -4,16 +4,16 @@ import attr
 from openpyxl import Workbook
 from openpyxl.cell import Cell
 from openpyxl.conftest import Worksheet
-from openpyxl.styles import Font, Side, Border, Fill, Alignment
+from openpyxl.styles import Font, Side, Border, Fill, Alignment, PatternFill
 from openpyxl.utils import get_column_letter
 
 
 @attr.s(auto_attribs=True)
 class Style:
     font: Font
-    border: Border = Border()
-    fill: Fill = None
-    alignment: Alignment = None
+    border: Border
+    fill: Fill
+    alignment: Alignment
 
 
 def xlsx_from_json(json_data: Dict) -> Workbook:
@@ -57,7 +57,13 @@ def style_from_json(style_json: Dict) -> Style:
     border_data = {side: Side(**side_data) for side, side_data in sides_data.items()}
     border = Border(**border_data)
 
-    return Style(font=font, border=border)
+    fill_data = style_json.get("fill", {})
+    fill = PatternFill(**fill_data)
+
+    alignment_data = style_json.get("alignment", {})
+    alignment = Alignment(**alignment_data)
+
+    return Style(font, border, fill, alignment)
 
 
 def _apply_styles_to_single_cell(cell: Cell, style: Style) -> None:
