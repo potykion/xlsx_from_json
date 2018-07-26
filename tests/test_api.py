@@ -6,15 +6,12 @@ from openpyxl.cell import Cell
 from openpyxl.conftest import Worksheet
 from openpyxl.styles import Font
 
-from xlsx_from_json import xlsx_from_json
-from xlsx_from_json.api import Style
+from xlsx_from_json import xlsx_from_json, Style
 
 
 @pytest.fixture()
 def default_style():
-    return Style(
-        font=Font(bold=True)
-    )
+    return Style(font=Font(bold=True))
 
 
 @pytest.fixture()
@@ -166,6 +163,5 @@ def test_sheet_fill_starts_with_start_row(json_data_with_start_row_and_multiple_
 def test_sheet_has_two_rows(json_data_with_start_row_and_multiple_cells):
     workbook: Workbook = xlsx_from_json(json_data_with_start_row_and_multiple_cells)
     sheet = workbook.active
-    workbook.save("op.xlsx")
     assert sheet.cell(row=2, column=1).value == "1x2"
     assert sheet.cell(row=4, column=1).value == "2x1"
