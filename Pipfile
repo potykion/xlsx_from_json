@@ -14,7 +14,7 @@ black = "==18.6b4"
 mypy = "*"
 pylint = "*"
 twine = "*"
-bumpversion = "*"
+"bump2version" = "*"
 
 [requires]
 python_version = "3.6"
