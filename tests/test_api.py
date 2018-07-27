@@ -169,9 +169,24 @@ def test_sheet_has_two_rows(json_data_with_start_row_and_multiple_cells):
     assert sheet.cell(row=2, column=1).value == "1x2"
     assert sheet.cell(row=4, column=1).value == "2x1"
 
+
 def test_sheet_has_two_columns(json_data_with_start_row_and_multiple_cells):
     workbook: Workbook = xlsx_from_json(json_data_with_start_row_and_multiple_cells)
     sheet = workbook.active
     assert sheet.cell(row=4, column=1).value == "2x1"
     assert sheet.cell(row=4, column=3).value == "1x1"
+
+
+def test_empty_row_render():
+    workbook: Workbook = xlsx_from_json({
+        "rows": [
+            {"cells": []},
+            {"cells": [{"value": "op"}]},
+            {},
+            {"cells": [{"value": "op"}]},
+        ]
+    })
+    sheet = workbook.active
+    assert sheet.cell(2, 1).value == "op"
+    assert sheet.cell(4, 1).value == "op"
 

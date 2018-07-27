@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- Empty row rendering
+
 ## 0.1.2
 
 ### Fixed
