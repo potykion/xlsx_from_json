@@ -59,7 +59,7 @@ class SheetFiller:
         if width == 1 and height == 1:
             style_single_cell(cell, style)
         else:
-            cell_range = str_cell_range(column, row, column + width, row + height)
+            cell_range = str_cell_range(column, row, column + width - 1, row + height - 1)
             style_and_merge_cell_range(self.sheet, cell_range, style)
 
         return CellWithSize(cell, width, height)

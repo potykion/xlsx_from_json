@@ -154,7 +154,7 @@ def test_cell_has_fill(workbook, cell):
 def test_sized_cell_is_rendered_as_merged_cells_and_style_set(json_data_with_sized_cell):
     workbook: Workbook = xlsx_from_json(json_data_with_sized_cell)
     sheet = workbook.active
-    assert sheet.cell(3, 6).border.bottom.border_style == "medium"
+    assert sheet.cell(2, 5).border.bottom.border_style == "medium"
 
 
 def test_sheet_fill_starts_with_start_row(json_data_with_start_row_and_multiple_cells):
