@@ -35,8 +35,7 @@ class SheetFiller:
 
         for row_data in json_data["rows"]:
             cells = self._fill_row(current_row, row_data.get("cells", []))
-            heights = [*map(attrgetter("height"), cells), 1]
-            row_height = max(heights)
+            row_height = max(map(attrgetter("height"), cells), default=1)
             current_row += row_height
 
     def _fill_row(self, row: int, cells_data: List[Dict]) -> Iterable[CellWithSize]:
