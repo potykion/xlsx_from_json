@@ -34,16 +34,18 @@ class SheetFiller:
         current_row = self.start_row
 
         for row_data in json_data["rows"]:
-            cells = self._fill_row(current_row, row_data.get("cells", []))
+            current_row += row_data.get("skip_rows", 0)
+            start_column = self.start_column + row_data.get("skip_columns", 0)
+            cells = self._fill_row(current_row, start_column, row_data.get("cells", []))
             row_height = max(map(attrgetter("height"), cells), default=1)
             current_row += row_height
 
-    def _fill_row(self, row: int, cells_data: List[Dict]) -> Iterable[CellWithSize]:
-        column = self.start_column
+    def _fill_row(self, row: int, column: int, cells_data: List[Dict]) -> Iterable[CellWithSize]:
+        current_column = column
 
         for cell_data in cells_data:
-            cell = self._create_cell(row, column, cell_data)
-            column += cell.width
+            cell = self._create_cell(row, current_column, cell_data)
+            current_column += cell.width
             yield cell
 
     def _create_cell(self, row: int, column: int, cell_data: Dict) -> CellWithSize:

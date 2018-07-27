@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Added
+
+- New row parameters: `skip_rows`, `skip_columns` 
+
 ### Fixed
 
 - Empty row rendering

@@ -190,3 +190,12 @@ def test_empty_row_render():
     assert sheet.cell(2, 1).value == "op"
     assert sheet.cell(4, 1).value == "op"
 
+
+def test_row_and_column_skip():
+    workbook: Workbook = xlsx_from_json({
+        "rows": [
+            {"cells": [{"value": "op"}], "skip_rows": 2, "skip_columns": 3}
+        ]
+    })
+    sheet = workbook.active
+    assert sheet.cell(3, 4).value == "op"
