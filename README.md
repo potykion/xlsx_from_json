@@ -31,11 +31,14 @@ Create .json file with following structure:
                         }
                     }
                 }
-            ]
+            ],
+            // move row by 2x1
+            "skip_columns": 2,
+            "skip_rows": 1
         }
     ],
-    "start_column": 3,
-    "start_row": 2
+    "start_column": 1,
+    "start_row": 1
 }
 ```
 
