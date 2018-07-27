@@ -1,9 +1,5 @@
-from itertools import chain
-
 import pytest
 from openpyxl import Workbook
-from openpyxl.cell import Cell
-from openpyxl.conftest import Worksheet
 from openpyxl.styles import Font
 
 from xlsx_from_json import xlsx_from_json, Style
@@ -12,69 +8,6 @@ from xlsx_from_json import xlsx_from_json, Style
 @pytest.fixture()
 def default_style():
     return Style(font=Font(bold=True))
-
-
-@pytest.fixture()
-def json_data_with_single_cell():
-    return {
-        "rows": [
-            {
-                "cells": [
-                    {
-                        "value": "Sample text",
-                        "style": {
-                            "font": {
-                                "name": "Times New Roman",
-                                "size": 12
-                            },
-                            "border": {
-                                "bottom": {
-                                    "border_style": "medium",
-                                    "color": "00000000"
-                                }
-                            },
-                            "alignment": {
-                                "horizontal": "center"
-                            },
-                            "fill": {
-                                "patternType": "gray125"
-                            }
-                        }
-                    }
-                ]
-            }
-        ],
-        "start_column": 3
-    }
-
-
-@pytest.fixture()
-def json_data_with_sized_cell():
-    return {
-        "rows": [
-            {
-                "cells": [
-                    {
-                        "value": "Sample text",
-                        "width": 5,
-                        "height": 2,
-                        "style": {
-                            "font": {
-                                "name": "Times New Roman",
-                                "size": 12
-                            },
-                            "border": {
-                                "bottom": {
-                                    "border_style": "medium",
-                                    "color": "FFFFFFFF"
-                                }
-                            }
-                        }
-                    }
-                ]
-            }
-        ]
-    }
 
 
 @pytest.fixture()
@@ -105,54 +38,125 @@ def json_data_with_start_row_and_multiple_cells():
     }
 
 
-@pytest.fixture()
-def workbook(json_data_with_single_cell, default_style) -> Workbook:
-    return xlsx_from_json(json_data_with_single_cell, default_style)
+def test_sheet_has_values():
+    wb = xlsx_from_json({"rows": [{"cells": [{"value": "op"}]}]})
+    sheet = wb.active
+    assert sheet.cell(1, 1).value == "op"
 
 
-@pytest.fixture()
-def sheet(workbook) -> Worksheet:
-    return workbook.active
+def test_cell_column_equals_to_start_column():
+    wb = xlsx_from_json({"rows": [{"cells": [{"value": "op"}]}], "start_column": 3})
+    sheet = wb.active
+    assert sheet.cell(1, 3).value == "op"
 
 
-@pytest.fixture()
-def cell(sheet) -> Cell:
-    return sheet.cell(row=1, column=3)
-
-
-def test_sheet_has_values(sheet):
-    assert list(filter(None, chain.from_iterable(sheet.values))) == ["Sample text"]
-
-
-def test_cell_is_shifted_by_offset(cell):
-    assert cell.column == 'C'
-    assert cell.value == "Sample text"
-
-
-def test_cell_has_font(cell):
+def test_cell_has_font():
+    wb = xlsx_from_json({
+        "rows": [
+            {
+                "cells": [
+                    {
+                        "value": "op",
+                        "style": {"font": {"size": 12, "name": "Times New Roman"}}
+                    }
+                ]
+            }
+        ]
+    })
+    sheet = wb.active
+    cell = sheet.cell(1, 1)
     assert cell.font.name == "Times New Roman"
     assert cell.font.size == 12
 
 
-def test_cell_has_font_bold_from_default_style(cell):
+def test_cell_has_font_bold_from_default_style(default_style):
+    wb = xlsx_from_json({"rows": [{"cells": [{"value": "op"}]}]}, default_style)
+    sheet = wb.active
+    cell = sheet.cell(1, 1)
     assert cell.font.bold
 
 
-def test_cell_has_border(workbook, cell):
+def test_cell_has_border():
+    wb = xlsx_from_json({
+        "rows": [
+            {
+                "cells": [
+                    {
+                        "value": "op",
+                        "style": {"border": {"bottom": {"border_style": "medium", "color": "00000000"}}}
+                    }
+                ]
+            }
+        ]
+    })
+    sheet = wb.active
+    cell = sheet.cell(1, 1)
     assert cell.border.bottom.border_style == "medium"
     assert cell.border.bottom.color.rgb == "00000000"
 
 
-def test_cell_has_alignment(workbook, cell):
+def test_cell_has_alignment():
+    wb = xlsx_from_json({
+        "rows": [
+            {
+                "cells": [
+                    {
+                        "value": "op",
+                        "style": {"alignment": {"horizontal": "center"}}
+                    }
+                ]
+            }
+        ]
+    })
+    sheet = wb.active
+    cell = sheet.cell(1, 1)
     assert cell.alignment.horizontal == "center"
 
 
-def test_cell_has_fill(workbook, cell):
+def test_cell_has_fill():
+    wb = xlsx_from_json({
+        "rows": [
+            {
+                "cells": [
+                    {
+                        "value": "op",
+                        "style": {"fill": {"patternType": "gray125"}}
+                    }
+                ]
+            }
+        ]
+    })
+    sheet = wb.active
+    cell = sheet.cell(1, 1)
     assert cell.fill.patternType == "gray125"
 
 
-def test_sized_cell_is_rendered_as_merged_cells_and_style_set(json_data_with_sized_cell):
-    workbook: Workbook = xlsx_from_json(json_data_with_sized_cell)
+def test_sized_cell_is_rendered_as_merged_cells_and_style_set():
+    workbook: Workbook = xlsx_from_json({
+        "rows": [
+            {
+                "cells": [
+                    {
+                        "value": "Sample text",
+                        "width": 5,
+                        "height": 2,
+                        "style": {
+                            "font": {
+                                "name": "Times New Roman",
+                                "size": 12
+                            },
+                            "border": {
+                                "bottom": {
+                                    "border_style": "medium",
+                                    "color": "FFFFFFFF"
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+    })
     sheet = workbook.active
     assert sheet.cell(2, 5).border.bottom.border_style == "medium"
 
