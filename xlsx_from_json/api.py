@@ -1,5 +1,5 @@
 from operator import attrgetter
-from typing import Dict, List, Iterable
+from typing import Dict, List, Iterable, Optional
 
 import attr
 from openpyxl import Workbook
@@ -19,7 +19,9 @@ def xlsx_from_json(json_data: Dict, default_style: Style = None) -> Workbook:
     start_row = json_data.get("start_row", 1)
     start_column = json_data.get("start_column", 1)
 
-    filler = RowFiller(sheet, start_column, start_row, default_style)
+    filler = RowFiller(
+        sheet, start_column, start_row, default_style, json_data.get("number_format")
+    )
     row_positions = filler.fill(json_data.get("rows", []))
 
     adjuster = Adjuster(sheet)
@@ -35,6 +37,7 @@ class RowFiller:
     start_column: int
     start_row: int
     default_style: Style
+    number_format: Optional[str] = None
 
     def fill(self, rows_data: List[Dict]) -> Iterable[int]:
         current_row = self.start_row
@@ -60,7 +63,11 @@ class RowFiller:
     def _create_cell(self, row: int, column: int, cell_data: Dict) -> CellWithSize:
         cell = self.sheet.cell(row, column)
 
-        cell.value = cell_data["value"]
+        value = cell_data["value"]
+        cell.value = value
+
+        if isinstance(value, float) and self.number_format:
+            cell.number_format = self.number_format
 
         width = cell_data.get("width", 1)
         height = cell_data.get("height", 1)

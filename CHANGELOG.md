@@ -5,6 +5,7 @@
 ### Added
 
 - Column and row sizing via `column_widths` and `row_height`
+- Number formatting via `number_format`
 
 ## 0.2.0
 

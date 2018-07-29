@@ -41,14 +41,16 @@ Create .json file with following structure:
     ],
     "start_column": 1,
     "start_row": 1,
-    // to change column widths
+    // change column widths
     "column_widths": [
         {
             // column_number or column_letter
             "column_number": 1,
             "width": 10
         }
-    ]
+    ],
+    // set number format (e.g. 1.234 -> 1.23)
+    "number_format": "0.00"
 }
 ```
 

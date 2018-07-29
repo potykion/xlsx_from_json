@@ -226,3 +226,14 @@ def test_row_and_column_sizing():
     assert sheet.row_dimensions[1].height == 10
     assert sheet.column_dimensions[get_column_letter(1)].width == 10
     assert sheet.column_dimensions["B"].width == 20
+
+
+def test_float_formatting():
+    workbook: Workbook = xlsx_from_json({
+        "rows": [
+            {"cells": [{"value": 1.256}]},
+        ],
+        "number_format": "0.00"
+    })
+    sheet = workbook.active
+    assert sheet.cell(1, 1).number_format == "0.00"
