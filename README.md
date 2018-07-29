@@ -34,11 +34,21 @@ Create .json file with following structure:
             ],
             // move row by 2x1
             "skip_columns": 2,
-            "skip_rows": 1
+            "skip_rows": 1,
+            // change row height
+            "row_height": 10
         }
     ],
     "start_column": 1,
-    "start_row": 1
+    "start_row": 1,
+    // to change column widths
+    "column_widths": [
+        {
+            // column_number or column_letter
+            "column_number": 1,
+            "width": 10
+        }
+    ]
 }
 ```
 
