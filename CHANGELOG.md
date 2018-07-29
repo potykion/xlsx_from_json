@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.3.0
+
 ### Added
 
 - Column and row sizing via `column_widths` and `row_height`
