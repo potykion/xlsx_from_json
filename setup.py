@@ -10,7 +10,7 @@ requirements = [
 
 setuptools.setup(
     name="xlsx_from_json",
-    version="0.2.0",
+    version="0.3.0",
     author="potykion",
     author_email="potykion@gmail.com",
     description="Creates xlsx from json via openpyxl.",
