@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- Column and row sizing via `column_widths` and `row_height`
+
 ## 0.2.0
 
 ### Added

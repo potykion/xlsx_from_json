@@ -4,6 +4,7 @@ from typing import Dict, List, Iterable
 import attr
 from openpyxl import Workbook
 from openpyxl.conftest import Worksheet
+from openpyxl.utils import get_column_letter
 
 from .models import Style, CellWithSize
 from .utils import str_cell_range, style_and_merge_cell_range, style_single_cell
@@ -13,11 +14,12 @@ def xlsx_from_json(json_data: Dict, default_style: Style = None) -> Workbook:
     default_style = default_style or Style()
 
     wb = Workbook()
+    sheet = wb.active
 
     start_row = json_data.get("start_row", 1)
     start_column = json_data.get("start_column", 1)
 
-    filler = SheetFiller(wb.active, start_column, start_row, default_style)
+    filler = SheetFiller(sheet, start_column, start_row, default_style)
     filler.fill(json_data)
 
     return wb
@@ -37,10 +39,18 @@ class SheetFiller:
             current_row += row_data.get("skip_rows", 0)
             start_column = self.start_column + row_data.get("skip_columns", 0)
 
+            if "row_height" in row_data:
+                self._adjust_row(current_row, row_data["row_height"])
+
             cells = self._fill_row(current_row, start_column, row_data.get("cells", []))
 
             row_height = max(map(attrgetter("height"), cells), default=1)
             current_row += row_height
+
+        self._adjust_columns(json_data.get("column_widths", []))
+
+    def _adjust_row(self, row: int, height: int) -> None:
+        self.sheet.row_dimensions[row].height = height
 
     def _fill_row(self, row: int, column: int, cells_data: List[Dict]) -> Iterable[CellWithSize]:
         current_column = column
@@ -67,3 +77,14 @@ class SheetFiller:
             style_and_merge_cell_range(self.sheet, cell_range, style)
 
         return CellWithSize(cell, width, height)
+
+    def _adjust_columns(self, columns: Dict) -> None:
+        for column in columns:
+            if "column_number" in column:
+                column_letter = get_column_letter(column["column_number"])
+            elif "column_letter" in column:
+                column_letter = column["column_letter"]
+            else:
+                raise ValueError("No column provided.")
+
+            self.sheet.column_dimensions[column_letter].width = column["width"]

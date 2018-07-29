@@ -1,6 +1,7 @@
 import pytest
 from openpyxl import Workbook
 from openpyxl.styles import Font
+from openpyxl.utils import get_column_letter
 
 from xlsx_from_json import xlsx_from_json, Style
 
@@ -203,3 +204,25 @@ def test_row_and_column_skip():
     })
     sheet = workbook.active
     assert sheet.cell(3, 4).value == "op"
+
+
+def test_row_and_column_sizing():
+    workbook: Workbook = xlsx_from_json({
+        "rows": [
+            {"cells": [{"value": "op"}], "row_height": 10},
+        ],
+        "column_widths": [
+            {
+                "width": 10,
+                "column_number": 1
+            },
+            {
+                "width": 20,
+                "column_letter": "B"
+            }
+        ]
+    })
+    sheet = workbook.active
+    assert sheet.row_dimensions[1].height == 10
+    assert sheet.column_dimensions[get_column_letter(1)].width == 10
+    assert sheet.column_dimensions["B"].width == 20
