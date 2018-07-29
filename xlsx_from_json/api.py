@@ -19,38 +19,35 @@ def xlsx_from_json(json_data: Dict, default_style: Style = None) -> Workbook:
     start_row = json_data.get("start_row", 1)
     start_column = json_data.get("start_column", 1)
 
-    filler = SheetFiller(sheet, start_column, start_row, default_style)
-    filler.fill(json_data)
+    filler = RowFiller(sheet, start_column, start_row, default_style)
+    row_positions = filler.fill(json_data.get("rows", []))
+
+    adjuster = Adjuster(sheet)
+    adjuster.adjust_columns(json_data.get("column_widths", []))
+    adjuster.adjust_rows(json_data.get("rows", []), row_positions)
 
     return wb
 
 
 @attr.s(auto_attribs=True)
-class SheetFiller:
+class RowFiller:
     sheet: Worksheet
     start_column: int
     start_row: int
     default_style: Style
 
-    def fill(self, json_data: Dict) -> None:
+    def fill(self, rows_data: List[Dict]) -> Iterable[int]:
         current_row = self.start_row
 
-        for row_data in json_data["rows"]:
+        for row_data in rows_data:
             current_row += row_data.get("skip_rows", 0)
             start_column = self.start_column + row_data.get("skip_columns", 0)
 
-            if "row_height" in row_data:
-                self._adjust_row(current_row, row_data["row_height"])
-
             cells = self._fill_row(current_row, start_column, row_data.get("cells", []))
-
             row_height = max(map(attrgetter("height"), cells), default=1)
+
+            yield current_row
             current_row += row_height
-
-        self._adjust_columns(json_data.get("column_widths", []))
-
-    def _adjust_row(self, row: int, height: int) -> None:
-        self.sheet.row_dimensions[row].height = height
 
     def _fill_row(self, row: int, column: int, cells_data: List[Dict]) -> Iterable[CellWithSize]:
         current_column = column
@@ -78,13 +75,23 @@ class SheetFiller:
 
         return CellWithSize(cell, width, height)
 
-    def _adjust_columns(self, columns: Dict) -> None:
-        for column in columns:
-            if "column_number" in column:
-                column_letter = get_column_letter(column["column_number"])
-            elif "column_letter" in column:
-                column_letter = column["column_letter"]
+
+@attr.s(auto_attribs=True)
+class Adjuster:
+    sheet: Worksheet
+
+    def adjust_columns(self, columns: Iterable[Dict]) -> None:
+        for column_data in columns:
+            if "column_number" in column_data:
+                column_letter = get_column_letter(column_data["column_number"])
+            elif "column_letter" in column_data:
+                column_letter = column_data["column_letter"]
             else:
                 raise ValueError("No column provided.")
 
-            self.sheet.column_dimensions[column_letter].width = column["width"]
+            self.sheet.column_dimensions[column_letter].width = column_data["width"]
+
+    def adjust_rows(self, rows: Iterable[Dict], row_positions: Iterable[int]) -> None:
+        for row_data, row_position in zip(rows, row_positions):
+            if "row_height" in row_data:
+                self.sheet.row_dimensions[row_position].height = row_data["row_height"]
