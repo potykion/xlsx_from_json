@@ -196,7 +196,7 @@ def test_empty_row_render():
     assert sheet.cell(4, 1).value == "op"
 
 
-def test_row_and_column_skip():
+def test_row_and_column_shift():
     workbook: Workbook = xlsx_from_json({
         "rows": [
             {"cells": [{"value": "op"}], "rows_shift": 2, "columns_shift": 3}
@@ -204,6 +204,18 @@ def test_row_and_column_skip():
     })
     sheet = workbook.active
     assert sheet.cell(3, 4).value == "op"
+
+
+def test_rows_and_columns_shift_for_cell():
+    workbook: Workbook = xlsx_from_json({
+        "rows": [
+            {"cells": [{"value": "op", "rows_shift": 2, "columns_shift": 3}]},
+            {"cells": [{"value": "op"}]},
+        ]
+    })
+    sheet = workbook.active
+    assert sheet.cell(row=3, column=4).value == "op"
+    assert sheet.cell(row=4, column=1).value == "op"
 
 
 def test_row_and_column_sizing():

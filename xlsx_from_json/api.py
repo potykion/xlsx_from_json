@@ -56,11 +56,15 @@ class RowFiller:
         current_column = column
 
         for cell_data in cells_data:
+            current_column += cell_data.get("columns_shift", 0)
             cell = self._create_cell(row, current_column, cell_data)
             current_column += cell.width
             yield cell
 
     def _create_cell(self, row: int, column: int, cell_data: Dict) -> CellWithSize:
+        rows_shift = cell_data.get("rows_shift", 0)
+        row += rows_shift
+
         cell = self.sheet.cell(row, column)
 
         value = cell_data["value"]
@@ -80,7 +84,8 @@ class RowFiller:
             cell_range = str_cell_range(column, row, column + width - 1, row + height - 1)
             style_and_merge_cell_range(self.sheet, cell_range, style)
 
-        return CellWithSize(cell, width, height)
+        rendered_height = height + rows_shift
+        return CellWithSize(cell, width, rendered_height)
 
 
 @attr.s(auto_attribs=True)

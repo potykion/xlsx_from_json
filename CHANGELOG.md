@@ -6,6 +6,11 @@
 
 - `skip_rows` > `rows_shift`; `skip_columns` > `columns_shift`
 
+### Added
+
+- `columns_shift`, `row_shift` for cells
+
+
 ## 0.3.0
 
 ### Added
