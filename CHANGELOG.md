@@ -9,7 +9,7 @@
 ### Added
 
 - `columns_shift`, `row_shift` for cells
-
+- `ignore_height` to ignore particular cell rendered height while computing next row
 
 ## 0.3.0
 

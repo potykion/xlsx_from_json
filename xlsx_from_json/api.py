@@ -1,3 +1,4 @@
+from itertools import filterfalse
 from operator import attrgetter
 from typing import Dict, List, Iterable, Optional
 
@@ -47,7 +48,8 @@ class RowFiller:
             start_column = self.start_column + row_data.get("columns_shift", 0)
 
             cells = self._fill_row(current_row, start_column, row_data.get("cells", []))
-            row_height = max(map(attrgetter("height"), cells), default=1)
+            cell_heights = map(attrgetter("height"), filterfalse(attrgetter("ignore_height"), cells))
+            row_height = max(cell_heights, default=1)
 
             yield current_row
             current_row += row_height
@@ -85,7 +87,7 @@ class RowFiller:
             style_and_merge_cell_range(self.sheet, cell_range, style)
 
         rendered_height = height + rows_shift
-        return CellWithSize(cell, width, rendered_height)
+        return CellWithSize(cell, width, rendered_height, cell_data.get("ignore_height", False))
 
 
 @attr.s(auto_attribs=True)

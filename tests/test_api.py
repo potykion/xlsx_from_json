@@ -218,6 +218,18 @@ def test_rows_and_columns_shift_for_cell():
     assert sheet.cell(row=4, column=1).value == "op"
 
 
+def test_rows_and_columns_shift_for_cell_with_height_ignore():
+    workbook: Workbook = xlsx_from_json({
+        "rows": [
+            {"cells": [{"value": "op", "rows_shift": 2, "columns_shift": 3, "ignore_height": True}]},
+            {"cells": [{"value": "op"}]},
+        ]
+    })
+    sheet = workbook.active
+    assert sheet.cell(row=3, column=4).value == "op"
+    assert sheet.cell(row=2, column=1).value == "op"
+
+
 def test_row_and_column_sizing():
     workbook: Workbook = xlsx_from_json({
         "rows": [

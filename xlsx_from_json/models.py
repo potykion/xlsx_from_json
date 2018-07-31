@@ -41,3 +41,4 @@ class CellWithSize:
     cell: Cell
     width: int
     height: int
+    ignore_height: bool = False
