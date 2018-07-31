@@ -5,6 +5,7 @@
 ### Changed 
 
 - `skip_rows` > `rows_shift`; `skip_columns` > `columns_shift`
+- `xlsx_from_json.default_style` defines in json
 
 ### Added
 

@@ -50,7 +50,13 @@ Create .json file with following structure:
         }
     ],
     // set number format (e.g. 1.234 -> 1.23)
-    "number_format": "0.00"
+    "number_format": "0.00",
+    // apply style to all cells
+    "default_style": {
+        "font": {
+            "bold": true
+        }
+    }
 }
 ```
 
@@ -66,27 +72,19 @@ with open("data.json", encoding="utf-8") as f:
 wb = xlsx_from_json(json_data)
 ```
 
-Created workbook will have values and styles defined above:
+Created workbook will have values:
 
 ```python
 sheet = wb.active
 assert sheet.cell(row=2, cell=3).value == "Sample text"
 ```
 
-You can pass default style to xlsx builder:
+The same true for the styles (cell ctyle + default style):
 
 ```python
-from xlsx_from_json import Style
-from openpyxl.styles import Font
-
-default_style = Style(font=Font("Times New Roman", 12, True))
-
-wb = xlsx_from_json(json_data, default_style)
 sheet = wb.active
-
 assert sheet.cell(row=2, cell=3).font.name == "Times New Roman"
-assert sheet.cell(row=2, cell=3).font.size == 12
-assert sheet.cell(row=2, cell=3).font.bold
+assert sheet.cell(row=2, cell=3).font.bold == True
 ```
 
 

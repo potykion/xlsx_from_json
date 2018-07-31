@@ -7,11 +7,6 @@ from xlsx_from_json import xlsx_from_json, Style
 
 
 @pytest.fixture()
-def default_style():
-    return Style(font=Font(bold=True))
-
-
-@pytest.fixture()
 def json_data_with_start_row_and_multiple_cells():
     return {
         "rows": [
@@ -70,8 +65,15 @@ def test_cell_has_font():
     assert cell.font.size == 12
 
 
-def test_cell_has_font_bold_from_default_style(default_style):
-    wb = xlsx_from_json({"rows": [{"cells": [{"value": "op"}]}]}, default_style)
+def test_cell_has_font_bold_from_default_style():
+    wb = xlsx_from_json({
+        "rows": [{"cells": [{"value": "op"}]}],
+        "default_style": {
+            "font": {
+                "bold": True
+            }
+        }
+    })
     sheet = wb.active
     cell = sheet.cell(1, 1)
     assert cell.font.bold

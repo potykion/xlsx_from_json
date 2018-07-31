@@ -11,8 +11,8 @@ from .models import Style, CellWithSize
 from .utils import str_cell_range, style_and_merge_cell_range, style_single_cell
 
 
-def xlsx_from_json(json_data: Dict, default_style: Style = None) -> Workbook:
-    default_style = default_style or Style()
+def xlsx_from_json(json_data: Dict) -> Workbook:
+    default_style = Style.from_json(json_data.get("default_style", {}))
 
     wb = Workbook()
     sheet = wb.active
