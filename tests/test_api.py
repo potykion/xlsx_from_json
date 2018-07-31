@@ -199,7 +199,7 @@ def test_empty_row_render():
 def test_row_and_column_skip():
     workbook: Workbook = xlsx_from_json({
         "rows": [
-            {"cells": [{"value": "op"}], "skip_rows": 2, "skip_columns": 3}
+            {"cells": [{"value": "op"}], "rows_shift": 2, "columns_shift": 3}
         ]
     })
     sheet = workbook.active

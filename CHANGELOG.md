@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Changed 
+
+- `skip_rows` > `rows_shift`; `skip_columns` > `columns_shift`
+
 ## 0.3.0
 
 ### Added
