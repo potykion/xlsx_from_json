@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Fixed
+
+- Fix cell rendering without value
+
 ## 1.0.0
 
 ### Changed 

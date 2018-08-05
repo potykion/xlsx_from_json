@@ -48,7 +48,9 @@ class RowFiller:
             start_column = self.start_column + row_data.get("columns_shift", 0)
 
             cells = self._fill_row(current_row, start_column, row_data.get("cells", []))
-            cell_heights = map(attrgetter("height"), filterfalse(attrgetter("ignore_height"), cells))
+            cell_heights = map(
+                attrgetter("height"), filterfalse(attrgetter("ignore_height"), cells)
+            )
             row_height = max(cell_heights, default=1)
 
             yield current_row
@@ -69,7 +71,7 @@ class RowFiller:
 
         cell = self.sheet.cell(row, column)
 
-        value = cell_data["value"]
+        value = cell_data.get("value")
         cell.value = value
 
         if isinstance(value, float) and self.number_format:

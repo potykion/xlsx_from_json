@@ -1,9 +1,10 @@
+from itertools import chain
+
 import pytest
 from openpyxl import Workbook
-from openpyxl.styles import Font
 from openpyxl.utils import get_column_letter
 
-from xlsx_from_json import xlsx_from_json, Style
+from xlsx_from_json import xlsx_from_json
 
 
 @pytest.fixture()
@@ -190,12 +191,12 @@ def test_empty_row_render():
             {"cells": []},
             {"cells": [{"value": "op"}]},
             {},
+            {"cells": [{}]},
             {"cells": [{"value": "op"}]},
         ]
     })
     sheet = workbook.active
-    assert sheet.cell(2, 1).value == "op"
-    assert sheet.cell(4, 1).value == "op"
+    assert list(chain.from_iterable(sheet.values)) == [None, "op", None, None, "op"]
 
 
 def test_row_and_column_shift():
