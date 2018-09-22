@@ -4,87 +4,69 @@ Creates xlsx from json via [openpyxl](https://openpyxl.readthedocs.io/en/latest/
 
 ## Usage
 
-Create .json file with following structure:
+Let's create following table:
+
+![Alt-text](/static/example1.jpg?raw=true)
+
+
+Firstly, define .json representation of table:
 
 ```java
 {
+    // rows to render
     "rows": [
         {
             "cells": [
                 {
-                    "value": "Sample text",
-                    // merge 5x2 cell range
-                    "width": 5,
-                    "height": 2,
-                    // openpyxl style: https://openpyxl.readthedocs.io/en/2.5/styles.html
-                    "style": {
-                        "font": {
-                            "name": "Times New Roman",
-                            "size": 12
-                        },
-                        "border": {
-                          "bottom": {
-                            // openpyxl border styles: // https://openpyxl.readthedocs.io/en/stable/_modules/openpyxl/styles/borders.html
-                            "border_style": "medium",
-                            "color": "FFFFFFFF"
-                          }
-                        }
-                    }
+                    "value": "Firstname",
+                    "style": {"font": {"bold": true}}
+                },
+                {
+                    "value": "Lastname",
+                    "style": {"font": {"bold": true}}
                 }
-            ],
-            // move row by 2x1
-            "skip_columns": 2,
-            "skip_rows": 1,
-            // change row height
-            "row_height": 10
-        }
-    ],
-    "start_column": 1,
-    "start_row": 1,
-    // change column widths
-    "column_widths": [
+            ]
+        },
         {
-            // column_number or column_letter
-            "column_number": 1,
-            "width": 10
+            "cells": [
+                {"value": "Jill"},
+                {"value": "Smith"}
+            ]
+        },
+        {
+            "cells": [
+                {"value": "Eve"},
+                {"value": "Jackson"}
+            ]
         }
     ],
-    // set number format (e.g. 1.234 -> 1.23)
-    "number_format": "0.00",
-    // apply style to all cells
+    // style applied to all cells
     "default_style": {
-        "font": {
-            "bold": true
-        }
+        "font": {"name": "Times New Roman", "size": 14}
     }
 }
 ```
 
-Create openpyxl workbook via ``xlsx_from_json`` function:
+
+Then create openpyxl workbook via ``xlsx_from_json`` function:
 
 ```python
 import json
 from xlsx_from_json import xlsx_from_json
 
-with open("data.json", encoding="utf-8") as f:
+with open("example.json", encoding="utf-8") as f:
     json_data = json.load(f)
     
 wb = xlsx_from_json(json_data)
 ```
 
-Created workbook will have values:
+Created workbook will have cells with defined values and styles:
 
 ```python
 sheet = wb.active
-assert sheet.cell(row=2, cell=3).value == "Sample text"
-```
-
-The same true for the styles (cell ctyle + default style):
-
-```python
-sheet = wb.active
-assert sheet.cell(row=2, cell=3).font.name == "Times New Roman"
-assert sheet.cell(row=2, cell=3).font.bold == True
+assert sheet.cell(row=1, cell=1).value == "Firstname"
+assert sheet.cell(row=1, cell=1).font.bold == True
+assert sheet.cell(row=1, cell=1).font.name == "Times New Roman"
 ```
 
 
